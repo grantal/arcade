@@ -5,8 +5,32 @@ import (
     "fmt"
     "strconv"
     "os"
+    "sync"
 )
 
+// holds info related to each game server
+type gameservice struct {
+    host string
+    port int
+    game string
+}
+
+// will hold the map of game services and 
+// the lock to that map
+type registry struct {
+    // gamemap is a map from the name of the game to all of the 
+    // registered game services running that game
+    gamemap map[string][]gameservice  
+    lock    *sync.Mutex
+}
+
+func makeGameService(h string, p int, g string) *gameservice{
+    return &gameservice{host:h,port:p,game:g}
+}
+
+func makeRegistry() *registry{
+    return &registry{gamemap:make(map[string][]*gameservice),lock:&sync.Mutex{}}
+}
 
 func handleArcade(out chan<- string, in <-chan string, info interface{}) {
     // the person connecting should say if they're a server or a client and what game they are

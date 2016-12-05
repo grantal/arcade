@@ -7,6 +7,10 @@ import (
     "os"
 )
 
+// hardcoded arcade address
+var arcadehostname string = "ravioli"
+var arcadeport int = 5888
+
 /*
 game: nim
 players alternate picking up 1-3 sticks and whoever picks up the 
@@ -14,10 +18,21 @@ last stick wins
 */
 func main() {
 
-    hostname := os.Args[1]
-    port,_ := strconv.Atoi(os.Args[2])
+    out, in, e := cs221.MakeConnection(arcadehostname,arcadeport,"nimc")
+    if e != nil {
+            fmt.Println(e.Error())
+            os.Exit(1)
+    }
 
-    out, in, e := cs221.MakeConnection(hostname,port,"nimc")
+    out <- "nim client\n\n"
+    gameservers := <- in
+
+    fmt.Print(gameservers)
+
+    //hostname := os.Args[1]
+    //port,_ := strconv.Atoi(os.Args[2])
+
+    out, in, e = cs221.MakeConnection(hostname,port,"nimc")
     if e != nil {
             fmt.Println(e.Error())
             os.Exit(1)

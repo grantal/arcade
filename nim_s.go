@@ -8,7 +8,7 @@ import (
 )
 
 // hardcoded arcade address
-var arcadehostname string = "localhost"
+var arcadehostname string = "ravioli"
 var arcadeport int = 5888
 
 func handleNim(out chan<- string, in <-chan string, info interface{}) {
