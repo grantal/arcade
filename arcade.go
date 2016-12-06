@@ -33,6 +33,28 @@ func makeRegistry() *registry{
     return &registry{gamemap:make(map[string][]*gameservice),lock:&sync.Mutex{}}
 }
 
+// locks the registry mutex and adds a gameservice to the gamemap
+// then unlocks
+func (r *registry) addGame(g *gameservice){
+    r.lock.Lock()
+    r.gamemap[g.game] = append(r.gamemap[g.game], g)
+    r.lock.Unlock()
+}
+
+// locks the registry mutex and removes a gameservice from the 
+// gamemap by pointer to the gameservice
+func (r *registry) removeGame(g *gameservice){
+    r.lock.Lock()
+    i := 0
+    for i < len(reg.gamemap[g.game]) {
+        if r.gamemap[g.game][i] == g {
+            r.gamemap[g.game] = append(r.gamemap[g.game][:i], r.gamemap[g.game][i+1:]...)
+        }
+        i++
+    }
+    reg.lock.Unlock()
+}
+
 // registry to be shared between threads
 var reg *registry = makeRegistry()
 
@@ -52,9 +74,7 @@ func handleArcade(out chan<- string, in <-chan string, info interface{}) {
         // object to be added to registry
         gam := makeGameService(host,port,game)
         // add gam to registry
-        reg.lock.Lock()
-        reg.gamemap[game] = append(reg.gamemap[game], gam)
-        reg.lock.Unlock()
+        reg.addGame(gam)
         // check up on server to make sure its still running
         response := "Still Here\n\n"
         for response == "Still Here\n\n" {
@@ -62,16 +82,8 @@ func handleArcade(out chan<- string, in <-chan string, info interface{}) {
             out <- "Are You still there?\n\n"
             response = <- in
         }
-        reg.lock.Lock()
-        // remove gam from map
-        i := 0
-        for i < len(reg.gamemap[game]) {
-            if reg.gamemap[game][i] == gam {
-                reg.gamemap[game] = append(reg.gamemap[game][:i], reg.gamemap[game][i+1:]...)
-            }
-            i++
-        }
-        reg.lock.Unlock()
+        // remove gam from registry
+        reg.removeGame(gam)
         fmt.Printf("%s:%d removed\n",host,port)
         
     } else {
