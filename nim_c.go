@@ -7,9 +7,11 @@ import (
     "os"
 )
 
+import "arcade/aconn"
+
 // hardcoded arcade address
-var arcadehostname string = "ravioli"
-var arcadeport int = 5888
+var arcadehostname string = aconn.ArcadeHostname 
+var arcadeport int = aconn.ArcadePort
 
 /*
 game: nim
