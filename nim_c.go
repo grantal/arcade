@@ -5,9 +5,9 @@ import (
     "fmt"
     "strconv"
     "os"
+    "arcade/aconn"
 )
 
-import "arcade/aconn"
 
 // hardcoded arcade address
 var arcadehostname string = aconn.ArcadeHostname 
@@ -20,39 +20,9 @@ last stick wins
 */
 func main() {
 
-    out, in, e := cs221.MakeConnection(arcadehostname,arcadeport,"nimc")
-    if e != nil {
-            fmt.Println(e.Error())
-            os.Exit(1)
-    }
+    hostname,port := aconn.ClientConnect("nim")
 
-    out <- "nim client\n\n"
-    gameservers := <- in
-
-    fmt.Print(gameservers)
-
-    // ask user to choose a server
-    fmt.Print("Enter number of server (ie 1,2,3): ")
-    var choice int
-    fmt.Scanf("%d", &choice)
-
-    out <- strconv.Itoa(choice) + "\n\n"
-    fmt.Print(strconv.Itoa(choice) + "\n\n")
-
-    report := <- in
-    // exit if you didn't choose a good server
-    if report == "INVALID CHOICE\n\n" {
-        fmt.Println("You didn't choose a valid server.")
-        fmt.Println("This may be because there are no servers for your game.")
-        os.Exit(1)
-    }
-
-    hostname := ""
-    port := 0
-
-    fmt.Sscanf(report, "%s %d",&hostname, &port)
-
-    out, in, e = cs221.MakeConnection(hostname,port,"nimc")
+    out, in, e := cs221.MakeConnection(hostname,port,"nimc")
     if e != nil {
             fmt.Println(e.Error())
             os.Exit(1)
