@@ -65,5 +65,11 @@ func main() {
         fmt.Println(e.Error())
         os.Exit(0)
     }
+
+    // check in with arcade
+    for {
+        <- in
+        out <- "Still Here\n\n"
+    }
 }
 

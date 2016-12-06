@@ -6,6 +6,7 @@ import (
     "strconv"
     "os"
     "sync"
+    "time"
 )
 
 // holds info related to each game server
@@ -54,6 +55,24 @@ func handleArcade(out chan<- string, in <-chan string, info interface{}) {
         reg.lock.Lock()
         reg.gamemap[game] = append(reg.gamemap[game], gam)
         reg.lock.Unlock()
+        // check up on server to make sure its still running
+        response := "Still Here\n\n"
+        for response == "Still Here\n\n" {
+            time.Sleep(10*time.Second)   
+            out <- "Are You still there?\n\n"
+            response = <- in
+        }
+        reg.lock.Lock()
+        // remove gam from map
+        i := 0
+        for i < len(reg.gamemap[game]) {
+            if reg.gamemap[game][i] == gam {
+                reg.gamemap[game] = append(reg.gamemap[game][:i], reg.gamemap[game][i+1:]...)
+            }
+            i++
+        }
+        reg.lock.Unlock()
+        fmt.Printf("%s:%d removed\n",host,port)
         
     } else {
         // give client list of services with their game
