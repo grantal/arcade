@@ -29,8 +29,19 @@ func main() {
 
     fmt.Print(gameservers)
 
-    //hostname := os.Args[1]
-    //port,_ := strconv.Atoi(os.Args[2])
+    // ask user to choose a server
+    fmt.Print("Enter number of server (ie 1,2,3): ")
+    var choice int
+    fmt.Scanf("%d", &choice)
+
+    out <- strconv.Itoa(choice) + "\n\n"
+    fmt.Print(strconv.Itoa(choice) + "\n\n")
+    report := <- in
+
+    hostname := ""
+    port := 0
+
+    fmt.Sscanf(report, "%s %d",&hostname, &port)
 
     out, in, e = cs221.MakeConnection(hostname,port,"nimc")
     if e != nil {

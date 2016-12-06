@@ -20,7 +20,7 @@ type gameservice struct {
 type registry struct {
     // gamemap is a map from the name of the game to all of the 
     // registered game services running that game
-    gamemap map[string][]gameservice  
+    gamemap map[string][]*gameservice  
     lock    *sync.Mutex
 }
 
@@ -31,6 +31,9 @@ func makeGameService(h string, p int, g string) *gameservice{
 func makeRegistry() *registry{
     return &registry{gamemap:make(map[string][]*gameservice),lock:&sync.Mutex{}}
 }
+
+// registry to be shared between threads
+var reg *registry = makeRegistry()
 
 func handleArcade(out chan<- string, in <-chan string, info interface{}) {
     // the person connecting should say if they're a server or a client and what game they are
@@ -44,7 +47,38 @@ func handleArcade(out chan<- string, in <-chan string, info interface{}) {
         host := ""
         port := 0
         fmt.Sscanf(report, "%s %d", &host, &port)
-        fmt.Printf("%s server on %s:%d",game,host,port)
+        fmt.Printf("%s server on %s:%d\n",game,host,port)
+        // object to be added to registry
+        gam := makeGameService(host,port,game)
+        // add gam to registry
+        reg.lock.Lock()
+        reg.gamemap[game] = append(reg.gamemap[game], gam)
+        reg.lock.Unlock()
+        
+    } else {
+        // give client list of services with their game
+        report := fmt.Sprintf("%s services connected\n",game)
+        i := 0
+        reg.lock.Lock()
+        for i < len(reg.gamemap[game]) {
+            igame := reg.gamemap[game][i].game
+            host := reg.gamemap[game][i].host
+            port := reg.gamemap[game][i].port
+            report += fmt.Sprintf("%d. %s on %s:%d\n",i+1,igame,host,port)
+            i++
+        }
+        reg.lock.Unlock()
+        out <- report + "\n"
+        // get client choice
+        report = <- in
+        var choice int
+        fmt.Sscanf(report, "%d",&choice)
+        // send client serve info they requested
+        reg.lock.Lock()
+        host := reg.gamemap[game][choice-1].host 
+        port := reg.gamemap[game][choice-1].port 
+        reg.lock.Unlock()
+        out <- fmt.Sprintf("%s %d\n\n",host,port)
     }
 }
 
