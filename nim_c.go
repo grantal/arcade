@@ -36,7 +36,14 @@ func main() {
 
     out <- strconv.Itoa(choice) + "\n\n"
     fmt.Print(strconv.Itoa(choice) + "\n\n")
+
     report := <- in
+    // exit if you didn't choose a good server
+    if report == "INVALID CHOICE\n\n" {
+        fmt.Println("You didn't choose a valid server.")
+        fmt.Println("This may be because there are no servers for your game.")
+        os.Exit(1)
+    }
 
     hostname := ""
     port := 0

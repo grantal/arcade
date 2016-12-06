@@ -104,12 +104,17 @@ func handleArcade(out chan<- string, in <-chan string, info interface{}) {
         report = <- in
         var choice int
         fmt.Sscanf(report, "%d",&choice)
-        // send client serve info they requested
-        reg.lock.Lock()
-        host := reg.gamemap[game][choice-1].host 
-        port := reg.gamemap[game][choice-1].port 
-        reg.lock.Unlock()
-        out <- fmt.Sprintf("%s %d\n\n",host,port)
+        // validate the choice
+        if choice >= 1 && choice <= len(reg.gamemap[game]){
+            // send client serve info they requested
+            reg.lock.Lock()
+            host := reg.gamemap[game][choice-1].host 
+            port := reg.gamemap[game][choice-1].port 
+            reg.lock.Unlock()
+            out <- fmt.Sprintf("%s %d\n\n",host,port)
+        } else {
+            out <- "INVALID CHOICE\n\n"
+        }
     }
 }
 
