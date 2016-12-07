@@ -74,7 +74,7 @@ import (
     "time"
     "os"
     "cs221"
-
+    "arcade/aconn"
 )
 
 // Global channel shared by all connection handlers.
@@ -459,6 +459,9 @@ func main() {
             fmt.Printf("REPORT: %s %s\n",r.player,r.result) 
         }
     }()
+
+    // break off new routine to communicate with arcade
+    go aconn.ServerConnect("blackjack", hostname, port)
 
     // Loop, accepting and handling client connections.
     e := cs221.HandleConnections(hostname, port, handleGame, "Dealer", nil)

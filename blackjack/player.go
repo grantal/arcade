@@ -8,8 +8,8 @@ package main
 import (
 	"cs221"
 	"fmt"
-	"strconv"
 	"os"
+        "arcade/aconn"
 )
 
 //
@@ -110,16 +110,9 @@ import (
 // contents.
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Printf("Error: too few command-line arguments.\n")
-		fmt.Printf("usage: go run player.go <host> <port>\n")
-		os.Exit(0)
-	}
-
-	// Get the hostname from the command line.
-	hostname := os.Args[1]
-	// Get the port number.
-	port,_ := strconv.Atoi(os.Args[2])
+        
+        // get hostname,port from arcade
+        hostname,port := aconn.ClientConnect("blackjack")
 
 	// Make a connection, getting "proxy" channels cout/cin.
 	cout, cin, e := cs221.MakeConnection(hostname, port, "player")
