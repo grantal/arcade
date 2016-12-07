@@ -40,7 +40,6 @@ func ClientConnect(game string) (string,int){
     fmt.Scanf("%d", &choice)
 
     out <- strconv.Itoa(choice) + "\n\n"
-    fmt.Print(strconv.Itoa(choice) + "\n\n")
 
     report := <- in
     // exit if you didn't choose a good server

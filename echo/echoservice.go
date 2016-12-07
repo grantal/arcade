@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"os"
 	"math/rand"
+        "arcade/aconn"
 )
 
 func handleEcho(out chan<- string, in <-chan string, info interface{}) {
@@ -25,6 +26,10 @@ func handleEcho(out chan<- string, in <-chan string, info interface{}) {
 func main() {
 	hostname := os.Args[1]
 	port,_ := strconv.Atoi(os.Args[2])
+
+        // break off new routine to communicate with arcade
+        go aconn.ServerConnect("echo", hostname, port)
+
 	e := cs221.HandleConnections(hostname, port, handleEcho, "Echo", nil)
 	if e != nil {
 		fmt.Println(e.Error())

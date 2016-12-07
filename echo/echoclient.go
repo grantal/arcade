@@ -3,13 +3,13 @@ package main
 import (
 	"cs221"
 	"fmt"
-	"strconv"
 	"os"
+        "arcade/aconn"
 )
 
 func main() {
-	hostname := os.Args[1]
-	port,_ := strconv.Atoi(os.Args[2])
+
+        hostname,port := aconn.ClientConnect("echo")
 
 	out, in, e := cs221.MakeConnection(hostname,port,"Shout")
 	if e != nil {
