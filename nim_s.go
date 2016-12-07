@@ -5,11 +5,8 @@ import (
     "fmt"
     "strconv"
     "os"
+    "arcade/aconn"
 )
-
-// hardcoded arcade address
-var arcadehostname string = "ravioli"
-var arcadeport int = 5888
 
 func handleNim(out chan<- string, in <-chan string, info interface{}) {
     fmt.Println("Client connected")
@@ -43,33 +40,16 @@ func main() {
     hostname := os.Args[1]
     port,_ := strconv.Atoi(os.Args[2])
     
-    out, in, e := cs221.MakeConnection(arcadehostname,arcadeport,"nimarcade")
-    if e != nil {
-            fmt.Println(e.Error())
-            os.Exit(1)
-    }
-    
-
-    fmt.Printf("Connected to arcade at %s:%d\n",arcadehostname,arcadeport)
-    // wait a sec to make sure arcade is ready
-    //time.Sleep(10*time.Second) 
-    //fmt.Println("Sleep Over")
-    out <- "nim server\n\n"
-    <- in
-    out <- fmt.Sprintf("%s %d\n\n", hostname,port)
-
+    // break off new routine to communicate with arcade
+    go aconn.ServerConnect("nim", hostname, port)
 
     fmt.Printf("Listening on %s:%d\n",hostname,port)
-    e = cs221.HandleConnections(hostname, port, handleNim, "nim", nil)
+    e := cs221.HandleConnections(hostname, port, handleNim, "nim", nil)
     if e != nil {
         fmt.Println(e.Error())
         os.Exit(0)
     }
 
-    // check in with arcade
-    for {
-        <- in
-        out <- "Still Here\n\n"
-    }
+
 }
 

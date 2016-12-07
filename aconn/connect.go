@@ -56,3 +56,28 @@ func ClientConnect(game string) (string,int){
     fmt.Sscanf(report, "%s %d",&hostname, &port)
     return hostname,port
 }
+
+// registers the server on the arcade and then checks in with
+// the arcade every time it asks
+// WARNING: This function loops forever
+func ServerConnect(game string, hostname string, port int) {
+    
+    out, in, e := cs221.MakeConnection(ArcadeHostname,ArcadePort,game)
+    if e != nil {
+            fmt.Println(e.Error())
+            os.Exit(1)
+    }
+    
+    fmt.Printf("Connected to arcade at %s:%d\n",ArcadeHostname,ArcadePort)
+    // wait a sec to make sure arcade is ready
+    out <- game + " server\n\n"
+    <- in
+    out <- fmt.Sprintf("%s %d\n\n", hostname,port)
+
+    // check in with arcade
+    for {
+        <- in
+        out <- "Still Here\n\n"
+    }
+
+}
