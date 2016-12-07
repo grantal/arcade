@@ -1,4 +1,5 @@
 package main
+// Handles the server for the nim game
 
 import (
     "cs221"

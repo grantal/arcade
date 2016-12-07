@@ -6,6 +6,7 @@ import (
 
 /*
 game: nim
+This is the single computer version of nim
 players alternate picking up 1-3 sticks and whoever picks up the 
 last stick wins
 */

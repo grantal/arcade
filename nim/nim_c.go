@@ -1,4 +1,5 @@
 package main
+// Client for the nim game
 
 import (
     "cs221"
