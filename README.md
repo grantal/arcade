@@ -11,6 +11,6 @@ Right now, I have it set up so that the arcade runs on ravioli at port 5888. So 
 
 ## Description of Game
 
-The game I made is called nim. The game starts with 8 sticks on a table and the players alternate picking up 1-3 sticks. Whoever picks up the last stick wins. The way it is right now, 1 client has to play for both players. 
+The game I recreated in go is called nim. The game starts with 8 sticks on a table and the players alternate picking up 1-3 sticks. Whoever picks up the last stick wins. The way it is right now, 1 client has to play for both players. 
 
 In the `nim/` directory `nim.go` is the not-networked version, `nim_c.go` is the client that connects to the arcade to find a gameserver, and `nim_s.go` is the server that registers itself with the arcade. You need to run the server like this: `go run nim_s.go <hostname> <port>`. The client does not require any arguments.
