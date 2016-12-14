@@ -1,5 +1,6 @@
 package main
 // Handles the server for the nim game
+// usage: go run nim_s.go <hostname> <port>
 
 import (
     "cs221"
