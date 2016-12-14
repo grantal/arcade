@@ -7,7 +7,7 @@ Theres a few ways to do this:
 
 ## Running the arcade
 
-Right now, I have it set up so that the arcade runs on ravioli at port 5888. So if you log on to ravioli and do `go run arcade.go ravioli 5888` it should work fine. If you want to run it somewhere else, change the `ArcadeHostName` and `ArcadePort` variables in `aconn/connect.go`
+Right now, I have it set up so that the arcade runs on ravioli at port 5888. So if you log on to ravioli and do `go run arcade.go ravioli 5888` the servers and clients should be able to connect fine. If you want to run it somewhere else, change the `ArcadeHostName` and `ArcadePort` variables in `aconn/connect.go` in order for the clients and game serivces to be able to find the arcade.
 
 ## Description of Game
 
